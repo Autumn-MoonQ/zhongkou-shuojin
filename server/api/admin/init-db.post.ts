@@ -1,4 +1,4 @@
-import { initDatabase } from '../db/index.js';
+import { initDatabase } from '~/server/db/index.js';
 
 export default defineEventHandler(async () => {
   try {
