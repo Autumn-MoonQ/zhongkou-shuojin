@@ -3,16 +3,12 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   modules: [
     '@element-plus/nuxt',
     '@pinia/nuxt'
   ],
-
-  elementPlus: {
-    importStyle: 'scss'
-  },
 
   css: [
     '@/assets/styles/main.scss'
@@ -41,6 +37,7 @@ export default defineNuxtConfig({
   },
 
   typescript: {
+    strict: false,
     typeCheck: false
   }
 })
