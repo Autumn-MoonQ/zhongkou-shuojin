@@ -1,0 +1,32 @@
+{
+  "name": "zhongkou-shuojin",
+  "version": "1.0.0",
+  "description": "众口铄金：热点整合·舆论分析·文科论述题深度解析",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "db:init": "node server/db/init.js",
+    "crawl": "node server/crawler/index.js"
+  },
+  "dependencies": {
+    "@element-plus/nuxt": "^1.0.10",
+    "@libsql/client": "^0.14.0",
+    "@pinia/nuxt": "^0.5.5",
+    "cheerio": "^1.2.0",
+    "element-plus": "^2.9.4",
+    "nuxt": "^3.15.4",
+    "pinia": "^2.3.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "sass": "^1.83.4",
+    "typescript": "^5.7.3"
+  }
+}
