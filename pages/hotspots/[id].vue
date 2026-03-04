@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { View, Star, Share, ChatDotRound, ArrowLeft } from '@element-plus/icons-vue'
+import { View, Star, StarFilled, Share, ChatDotRound, ArrowLeft } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 const id = route.params.id
 
 const { data, pending } = await useFetch(`/api/hotspots/${id}`)
@@ -16,6 +17,7 @@ const { data: relatedAnalysis } = await useFetch('/api/analysis', {
 const isLiked = ref(false)
 const isFavorited = ref(false)
 const likeCount = ref(0)
+const favoriteLoading = ref(false)
 
 function formatDate(dateStr: string) {
   return dateStr?.split('T')[0] || ''
@@ -26,18 +28,73 @@ function handleLike() {
   likeCount.value += isLiked.value ? 1 : -1
 }
 
-function handleFavorite() {
-  isFavorited.value = !isFavorited.value
+async function handleFavorite() {
+  if (!userStore.isLoggedIn) {
+    router.push('/login')
+    return
+  }
+
+  if (favoriteLoading.value) return
+  favoriteLoading.value = true
+
+  try {
+    if (isFavorited.value) {
+      // 取消收藏 - 需要先获取收藏ID
+      const favorites = await $fetch('/api/favorites', {
+        query: { userId: userStore.user?.id, type: 'hotspot' }
+      })
+      const favorite = favorites.data?.find((f: any) => f.id === Number(id))
+      if (favorite) {
+        await $fetch('/api/favorites/remove', {
+          method: 'POST',
+          body: { favoriteId: favorite.favorite_id }
+        })
+      }
+      isFavorited.value = false
+    } else {
+      // 添加收藏
+      const result = await $fetch('/api/favorites/add', {
+        method: 'POST',
+        body: {
+          userId: userStore.user?.id,
+          targetType: 'hotspot',
+          targetId: Number(id)
+        }
+      })
+      if (result.success) {
+        isFavorited.value = true
+      }
+    }
+  } catch (error) {
+    console.error('收藏操作失败:', error)
+  } finally {
+    favoriteLoading.value = false
+  }
 }
 
 function goBack() {
   router.back()
 }
 
+// 检查是否已收藏
+async function checkFavoriteStatus() {
+  if (!userStore.isLoggedIn || !userStore.user?.id) return
+
+  try {
+    const favorites = await $fetch('/api/favorites', {
+      query: { userId: userStore.user?.id, type: 'hotspot' }
+    })
+    isFavorited.value = favorites.data?.some((f: any) => f.id === Number(id)) || false
+  } catch (error) {
+    console.error('检查收藏状态失败:', error)
+  }
+}
+
 // 初始化
 watchEffect(() => {
   if (data.value?.data) {
     likeCount.value = data.value.data.like_count
+    checkFavoriteStatus()
   }
 })
 </script>
