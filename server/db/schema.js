@@ -137,6 +137,17 @@ CREATE TABLE IF NOT EXISTS categories (
 )
 `;
 
+// 在线用户表
+export const createOnlineUsersTable = `
+CREATE TABLE IF NOT EXISTS online_users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL UNIQUE,
+  last_activity_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+)
+`;
+
 // 所有表的创建语句
 export const allTables = [
   createUsersTable,
@@ -146,5 +157,6 @@ export const allTables = [
   createEssaysTable,
   createCommentsTable,
   createFavoritesTable,
-  createLikesTable
+  createLikesTable,
+  createOnlineUsersTable
 ];

@@ -15,6 +15,19 @@ const isActive = (path: string) => {
   if (path === '/') return route.path === '/'
   return route.path.startsWith(path)
 }
+
+// 监听登录状态，启动/停止心跳
+watch(
+  () => userStore.isLoggedIn,
+  (isLoggedIn) => {
+    if (isLoggedIn) {
+      userStore.startHeartbeat()
+    } else {
+      userStore.stopHeartbeat()
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -84,7 +97,12 @@ const isActive = (path: string) => {
 
     <!-- 主内容区 -->
     <main class="layout-main">
-      <slot />
+      <div class="main-content">
+        <slot />
+      </div>
+      <aside class="sidebar">
+        <OnlineUsers />
+      </aside>
     </main>
 
     <!-- 底部 -->
@@ -286,6 +304,21 @@ const isActive = (path: string) => {
 .layout-main {
   flex: 1;
   padding: 32px;
+  display: flex;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+
+  .main-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+  }
 }
 
 .layout-footer {
@@ -368,6 +401,11 @@ const isActive = (path: string) => {
 
   .layout-main {
     padding: 16px;
+    flex-direction: column;
+
+    .sidebar {
+      display: none;
+    }
   }
 }
 </style>
