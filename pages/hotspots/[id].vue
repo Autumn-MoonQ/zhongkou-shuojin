@@ -30,6 +30,7 @@ function handleLike() {
 
 async function handleFavorite() {
   if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录')
     router.push('/login')
     return
   }
@@ -42,13 +43,14 @@ async function handleFavorite() {
       // 取消收藏 - 需要先获取收藏ID
       const favorites = await $fetch('/api/favorites', {
         query: { userId: userStore.user?.id, type: 'hotspot' }
-      })
+      }) as any
       const favorite = favorites.data?.find((f: any) => f.id === Number(id))
       if (favorite) {
         await $fetch('/api/favorites/remove', {
           method: 'POST',
           body: { favoriteId: favorite.favorite_id }
         })
+        ElMessage.success('已取消收藏')
       }
       isFavorited.value = false
     } else {
@@ -60,13 +62,22 @@ async function handleFavorite() {
           targetType: 'hotspot',
           targetId: Number(id)
         }
-      })
+      }) as any
       if (result.success) {
         isFavorited.value = true
+        ElMessage.success('收藏成功')
+      } else {
+        // 如果已收藏，更新状态
+        if (result.message === '已收藏') {
+          isFavorited.value = true
+        } else {
+          ElMessage.error(result.message || '收藏失败')
+        }
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('收藏操作失败:', error)
+    ElMessage.error(error.data?.message || '操作失败')
   } finally {
     favoriteLoading.value = false
   }
