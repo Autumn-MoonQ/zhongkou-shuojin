@@ -97,13 +97,11 @@ watch(
 
     <!-- 主内容区 -->
     <main class="layout-main">
-      <div class="main-content">
-        <slot />
-      </div>
-      <aside class="sidebar">
-        <OnlineUsers />
-      </aside>
+      <slot />
     </main>
+
+    <!-- 在线用户浮标 -->
+    <OnlineUsers />
 
     <!-- 底部 -->
     <footer class="layout-footer">
@@ -304,21 +302,9 @@ watch(
 .layout-main {
   flex: 1;
   padding: 32px;
-  display: flex;
-  gap: 24px;
   max-width: 1280px;
   margin: 0 auto;
   width: 100%;
-
-  .main-content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .sidebar {
-    width: 280px;
-    flex-shrink: 0;
-  }
 }
 
 .layout-footer {
@@ -401,11 +387,6 @@ watch(
 
   .layout-main {
     padding: 16px;
-    flex-direction: column;
-
-    .sidebar {
-      display: none;
-    }
   }
 }
 </style>
