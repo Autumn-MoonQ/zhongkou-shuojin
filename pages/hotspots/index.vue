@@ -122,7 +122,7 @@ function getHeatLevel(views: number) {
         :style="{ animationDelay: `${index * 0.05}s` }"
       >
         <NuxtLink :to="`/hotspots/${item.id}`" class="item-link">
-          <div class="item-rank" :class="{ 'top-3': (page - 1) * 12 + index < 3 }">
+          <div class="item-rank" :class="{ 'rank-1': (page - 1) * 12 + index === 0, 'rank-2': (page - 1) * 12 + index === 1, 'rank-3': (page - 1) * 12 + index === 2 }">
             <span class="rank-num">{{ (page - 1) * 12 + index + 1 }}</span>
           </div>
 
@@ -344,11 +344,33 @@ function getHeatLevel(views: number) {
       color: #94a3b8;
     }
 
-    &.top-3 {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+    // 金牌 - 第一名
+    &.rank-1 {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
 
       .rank-num {
-        color: white;
+        color: #5D4E37;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    // 银牌 - 第二名
+    &.rank-2 {
+      background: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 50%, #A8A8A8 100%);
+
+      .rank-num {
+        color: #4A4A4A;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    // 铜牌 - 第三名
+    &.rank-3 {
+      background: linear-gradient(135deg, #CD7F32 0%, #B87333 50%, #A0522D 100%);
+
+      .rank-num {
+        color: #F5F5DC;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       }
     }
   }

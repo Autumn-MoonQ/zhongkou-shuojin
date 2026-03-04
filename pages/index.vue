@@ -121,7 +121,7 @@ const features = [
       <div class="hotspots-grid">
         <div v-for="(item, index) in hotspots?.data?.list || []" :key="item.id" class="hotspot-card">
           <NuxtLink :to="`/hotspots/${item.id}`">
-            <div class="card-rank" :class="{ 'top-3': index < 3 }">
+            <div class="card-rank" :class="{ 'rank-1': index === 0, 'rank-2': index === 1, 'rank-3': index === 2 }">
               <span>{{ index + 1 }}</span>
             </div>
             <div class="card-content">
@@ -564,9 +564,28 @@ const features = [
     font-weight: 700;
     color: #94a3b8;
 
-    &.top-3 {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
+    // 金牌 - 第一名
+    &.rank-1 {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+      color: #5D4E37;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    // 银牌 - 第二名
+    &.rank-2 {
+      background: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 50%, #A8A8A8 100%);
+      color: #4A4A4A;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    // 铜牌 - 第三名
+    &.rank-3 {
+      background: linear-gradient(135deg, #CD7F32 0%, #B87333 50%, #A0522D 100%);
+      color: #F5F5DC;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
   }
 
