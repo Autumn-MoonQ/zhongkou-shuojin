@@ -276,6 +276,13 @@ watchEffect(() => {
     </template>
 
     <el-empty v-else description="论述题不存在" />
+
+    <!-- AI聊天组件 -->
+    <AiChat
+      v-if="data?.success && data?.data"
+      :essay-title="data.data.title"
+      :essay-question="data.data.question"
+    />
   </div>
 </template>
 
