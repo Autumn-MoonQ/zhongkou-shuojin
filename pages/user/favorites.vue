@@ -27,6 +27,13 @@ const typeLabels: Record<string, { label: string; icon: any; color: string }> = 
   essay: { label: '论述题', icon: Document, color: '#10b981' }
 }
 
+// 类型到路由的映射
+const typeRoutes: Record<string, string> = {
+  hotspot: 'hotspots',
+  analysis: 'analysis',
+  essay: 'essays'
+}
+
 // 取消收藏
 const handleRemove = async (favoriteId: number) => {
   try {
@@ -110,7 +117,7 @@ function handleTabChange(tab: string) {
         :key="item.favorite_id"
         class="favorite-card"
       >
-        <NuxtLink :to="`/${item.type}/${item.id}`" class="card-link">
+        <NuxtLink :to="`/${typeRoutes[item.type]}/${item.id}`" class="card-link">
           <!-- 类型标签 -->
           <div class="card-type" :style="{ background: typeLabels[item.type]?.color || '#667eea' }">
             <el-icon><component :is="typeLabels[item.type]?.icon" /></el-icon>
