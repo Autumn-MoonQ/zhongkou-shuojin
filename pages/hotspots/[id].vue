@@ -17,15 +17,63 @@ const { data: relatedAnalysis } = await useFetch('/api/analysis', {
 const isLiked = ref(false)
 const isFavorited = ref(false)
 const likeCount = ref(0)
+const likeId = ref<number | null>(null)
 const favoriteLoading = ref(false)
+const likeLoading = ref(false)
 
 function formatDate(dateStr: string) {
   return dateStr?.split('T')[0] || ''
 }
 
-function handleLike() {
-  isLiked.value = !isLiked.value
-  likeCount.value += isLiked.value ? 1 : -1
+async function handleLike() {
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录')
+    router.push('/login')
+    return
+  }
+
+  if (likeLoading.value) return
+  likeLoading.value = true
+
+  try {
+    if (isLiked.value) {
+      // 取消点赞
+      await $fetch('/api/likes/remove', {
+        method: 'POST',
+        body: { likeId: likeId.value }
+      })
+      isLiked.value = false
+      likeId.value = null
+      likeCount.value -= 1
+      ElMessage.success('已取消点赞')
+    } else {
+      // 添加点赞
+      const result = await $fetch('/api/likes/add', {
+        method: 'POST',
+        body: {
+          userId: userStore.user?.id,
+          targetType: 'hotspot',
+          targetId: Number(id)
+        }
+      }) as any
+      if (result.success) {
+        isLiked.value = true
+        likeId.value = result.data?.likeId
+        likeCount.value += 1
+        ElMessage.success('点赞成功')
+      } else if (result.message === '已点赞') {
+        isLiked.value = true
+        likeId.value = result.data?.likeId
+      } else {
+        ElMessage.error(result.message || '点赞失败')
+      }
+    }
+  } catch (error: any) {
+    console.error('点赞操作失败:', error)
+    ElMessage.error(error.data?.message || '操作失败')
+  } finally {
+    likeLoading.value = false
+  }
 }
 
 async function handleFavorite() {
@@ -101,11 +149,33 @@ async function checkFavoriteStatus() {
   }
 }
 
+// 检查是否已点赞
+async function checkLikeStatus() {
+  if (!userStore.isLoggedIn || !userStore.user?.id) return
+
+  try {
+    const result = await $fetch('/api/likes/check', {
+      query: {
+        userId: userStore.user?.id,
+        targetType: 'hotspot',
+        targetId: id
+      }
+    }) as any
+    if (result.success && result.data) {
+      isLiked.value = result.data.isLiked
+      likeId.value = result.data.likeId
+    }
+  } catch (error) {
+    console.error('检查点赞状态失败:', error)
+  }
+}
+
 // 初始化
 watchEffect(() => {
   if (data.value?.data) {
     likeCount.value = data.value.data.like_count
     checkFavoriteStatus()
+    checkLikeStatus()
   }
 })
 </script>
